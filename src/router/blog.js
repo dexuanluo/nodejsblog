@@ -1,11 +1,14 @@
-
-
+const {getList} = require('../controller/blog');
+const {SuccessRes, ErrorRes} = require('../model/result');
 const handleBlogRouter = (req, res) =>{
     
     
     
     if (req.method === 'GET' && req.path === '/api/blog/list'){
-        return {msg: 'blog list api'}
+        const author = req.query.author || '';
+        const keyword = req.query.keyword || '';
+        const listData = getList(author, keyword);
+        return new SuccessRes(listData);
     };
 
     if (req.method ==='GET' && req.path === '/api/blog/detail'){
