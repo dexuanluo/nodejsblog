@@ -9,7 +9,6 @@
     "prd": "cross-env NODE_ENV=production nodemon bin/Server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
   "author": "",
   "license": "ISC",
   "devDependencies": {
