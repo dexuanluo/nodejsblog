@@ -1,7 +1,14 @@
-const {getList} = require('../controller/blog');
+const {
+    getList, 
+    getDetail, 
+    newBlog,
+    updateBlog,
+    deleteBlog} = require('../controller/blog');
 const {SuccessRes, ErrorRes} = require('../model/result');
+
 const handleBlogRouter = (req, res) =>{
-    
+    console.log(req.query)
+    const id = req.query.id;
     
     
     if (req.method === 'GET' && req.path === '/api/blog/list'){
@@ -12,14 +19,33 @@ const handleBlogRouter = (req, res) =>{
     };
 
     if (req.method ==='GET' && req.path === '/api/blog/detail'){
-        return {msg: 'blog detail api'}
+        
+        const detailData = getDetail(id);
+        return new SuccessRes(detailData);
     }
 
     if (req.method ==='POST' && req.path === '/api/blog/new'){
-        return {msg: 'blog new api'}
+        
+        const data = newBlog(req.body);
+        return new SuccessRes(data);
+    }
+    if (req.method ==='POST' && req.path === '/api/blog/update'){
+        const data = updateBlog(id, req.body);
+        if (data){
+            return new SuccessRes();
+        }else{
+            return new ErrorRes('Failed update');
+        }
+        
     }
     if (req.method ==='POST' && req.path === '/api/blog/del'){
-        return {msg: 'blog delete api'}
+        const data = deleteBlog(id);
+        if (data){
+            return new SuccessRes();
+        }else{
+            return new ErrorRes('Failed delete');
+        }
     }
 };
+
 module.exports = handleBlogRouter
