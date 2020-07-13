@@ -39,6 +39,7 @@ const getPostData = (req)=>{
     return promise;
 };
 
+
 const serverHandler = (req, res)=> {
     //set header
     res.setHeader('Content-type', 'application/json');
@@ -48,50 +49,25 @@ const serverHandler = (req, res)=> {
     //get query
     req.query = querrystring.parse(url.split('?')[1]);
     //deal with post req
-    if (req.method === 'POST'){
-        getPostData(req).then((postData) =>{
-            req.body = postData;
-            //handle router
-            const blogData = handleBlogRouter(req, res);
-            if (blogData){
-                res.end(
-                    JSON.stringify(blogData)
-                );
-                return;
-            };
-            
-            const userData = handleUserRouter(req, res);
-            if (userData){
-                res.end(
-                    JSON.stringify(userData)
-                );
-                return;
-            };
-            //return bad request
-            console.log('not found');
-            res.writeHead(404, {"Content-type": "text/plain"});
-            res.write("404 NOT FOUND\n");
-            res.end();
-            return;
-        }).catch(() =>
-        {
-            res.writeHead(500, {"Content-type": "text/plain"});
-            res.write("500 Server Error\n");
-            res.end();
-        }
     
-        );
-    }else if(req.method === 'GET'){
+    getPostData(req).then((postData) =>{
+        req.body = postData;
         //handle router
-        const blogData = handleBlogRouter(req, res);
-        if (blogData){
-            res.end(
-                JSON.stringify(blogData)
+        const blogResult = handleBlogRouter(req, res);
+        if (blogResult){
+            blogResult.then(
+                (blogData)=>{
+                    if (blogData){
+                        res.end(
+                            JSON.stringify(blogData)
+                        );
+                        return;
+                    };
+                    
+                }
             );
             return;
-        };
-        
-
+        }
 
         const userData = handleUserRouter(req, res);
         if (userData){
@@ -100,11 +76,17 @@ const serverHandler = (req, res)=> {
             );
             return;
         };
-        //return bad request
+        
         console.log('not found');
         res.writeHead(404, {"Content-type": "text/plain"});
         res.write("404 NOT FOUND\n");
         res.end();
+        return;
+    });
+    
+        
+        
+    
     }
     
 
@@ -112,5 +94,5 @@ const serverHandler = (req, res)=> {
     
     
 
-}
+
 module.exports = serverHandler;

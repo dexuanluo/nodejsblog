@@ -16,13 +16,13 @@ class BaseRes{
 class SuccessRes extends BaseRes{
     constructor(data, message){
         super(data, message);
-        this.erno = 0;
+        this.errno = 0;
     }
 };
 class ErrorRes extends BaseRes{
     constructor(data, message){
         super(data, message);
-        this.erno = -1;
+        this.errno = -1;
     }
 };
 

@@ -1,53 +1,52 @@
+const { exec } = require('../db/mysql');
 const getList = (author, keyword) => {
-    return [
-        {
-            id: 1,
-            title:'title A',
-            content:'content A',
-            createTime: 1594503016188,
-            author: 'doublelift'
-        },
-        {
-            id: 1,
-            title:'title B',
-            content:'content B',
-            createTime: 1594503080091,
-            author: 'triplelift'
-        }
-    ];
+    
+    let sql = `select * from blogs where 1=1 `;
+    if (author){
+        sql += `and author='${author}' `;
+    }
+    if (keyword){
+        sql += `and title like '%${keyword}%' `
+    }
+    sql += `order by createtime desc;`
+    console.log(sql)
+    return exec(sql);
 }
 const getDetail = (id) => {
-    return [
-        {
-            id: 1,
-            title:'title A',
-            content:'content A',
-            createTime: 1594503016188,
-            author: 'doublelift'
-        },
-        {
-            id: 1,
-            title:'title B',
-            content:'content B',
-            createTime: 1594503080091,
-            author: 'triplelift'
-        }
-    ];
+    const sql = `select * from blogs where id=${id}`
+    return exec(sql);
 };
 const newBlog = (blogData= {}) => {
-    
-    return {
-        id:99999
-    };
+    const title = blogData.title;
+    const content = blogData.content;
+    const author = blogData.author;
+    const createtime = Date.now();
+    const sql = 
+    `
+    insert into blogs (title, content, author, createtime) 
+    values('${title}', '${content}', '${author}', '${createtime}')
+    `
+    console.log(sql);
+    return exec(sql);
 };
 const updateBlog = (id, blogData = {}) =>{
-    
-    return false
+    const title = blogData.title;
+    const content = blogData.content;
+    const sql = 
+    `
+    update blogs set title='${title}', content='${content}' where id=${id}
+    `;
+    console.log(sql);
+    return exec(sql);
 }
 
-const deleteBlog = (id) =>{
-    console.log('delete', id)
-    return true
+const deleteBlog = (id, author) =>{
+    const sql = 
+    `
+    delete from blogs where id=${id} and author='${author}';
+    `;
+    console.log(sql);
+    return exec(sql);
 }
 
 
