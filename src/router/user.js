@@ -6,12 +6,17 @@ const handleUserRouter = (req, res) =>{
     if (req.method === 'POST' && req.path === '/api/user/login'){
         const {username, password} = req.body;
         
-        const res = login_authentication(username, password);
-        if (res){
-            return new SuccessRes();
-        } else {
-            return new ErrorRes('login failed');
-        }
+        const result = login_authentication(username, password);
+        return result.then(
+            (data)=>{
+                if (data.length>0){
+                    return new SuccessRes();
+                } else {
+                    return new ErrorRes('wrong username or password');
+                }
+            }
+        );
+        
     }
 
 };

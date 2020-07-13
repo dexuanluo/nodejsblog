@@ -69,14 +69,22 @@ const serverHandler = (req, res)=> {
             return;
         }
 
-        const userData = handleUserRouter(req, res);
-        if (userData){
-            res.end(
-                JSON.stringify(userData)
+        const userResult = handleUserRouter(req, res);
+        if (userResult){
+            userResult.then(
+                (userData)=>{
+                    if (userData){
+                        res.end(
+                            JSON.stringify(userData)
+                        );
+                        return;
+                    };
+                }
             );
             return;
-        };
+        }
         
+
         console.log('not found');
         res.writeHead(404, {"Content-type": "text/plain"});
         res.write("404 NOT FOUND\n");
