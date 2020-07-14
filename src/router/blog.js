@@ -5,7 +5,13 @@ const {
     updateBlog,
     deleteBlog} = require('../controller/blog');
 const {SuccessRes, ErrorRes} = require('../model/result');
-
+const loginCheck = (req)=>{
+    if (!req.session.username){
+        return Promise.resolve(
+            new ErrorRes('not login')
+        )
+    }
+}
 const handleBlogRouter = (req, res) =>{
     const id = req.query.id;
     
@@ -21,14 +27,24 @@ const handleBlogRouter = (req, res) =>{
     };
 
     if (req.method ==='GET' && req.path === '/api/blog/detail'){
+        if (!id){
+            return Promise.resolve(
+                new ErrorRes('no id specified')
+            )
+        }
         const result = getDetail(id);
         return result.then((detailData)=>{
+            console.log(detailData)
             return new SuccessRes(detailData[0])
         });
     }
 
     if (req.method ==='POST' && req.path === '/api/blog/new'){
-        req.body.author = 'dexuan'
+        const loginResult = loginCheck(req);
+        if (loginResult){
+            return loginResult;
+        }
+        req.body.auhtor = req.session.username;
         const result = newBlog(req.body);
         return result.then((data)=>{
             return new SuccessRes({
@@ -37,6 +53,16 @@ const handleBlogRouter = (req, res) =>{
         })
     }
     if (req.method ==='POST' && req.path === '/api/blog/update'){
+        const loginResult = loginCheck(req);
+        if (loginResult){
+            return loginResult;
+        }
+        if (!id){
+            return Promise.resolve(
+                new ErrorRes('no id specified')
+            )
+        }
+        req.body.auhtor = req.session.username;
         const result = updateBlog(id, req.body);
         return result.then(
             (data)=>{
@@ -50,7 +76,16 @@ const handleBlogRouter = (req, res) =>{
         
     }
     if (req.method ==='POST' && req.path === '/api/blog/del'){
-        const author = 'dexuan'
+        const loginResult = loginCheck(req);
+        if (loginResult){
+            return loginResult;
+        }
+        if (!id){
+            return Promise.resolve(
+                new ErrorRes('no id specified')
+            )
+        }
+        const author = req.session.username;
         const result = deleteBlog(id, author);
         return result.then(
             (data)=>{

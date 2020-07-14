@@ -20,7 +20,7 @@ exec = (sql) => {
     );
     return promise;
 }
-
+console.log('mysql OK');
 module.exports = {
     exec
 }

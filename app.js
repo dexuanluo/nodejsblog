@@ -1,7 +1,7 @@
-const  querrystring = require('querystring');
-const  handleBlogRouter = require('./src/router/blog');
-const  handleUserRouter = require('./src/router/user');
-
+const querrystring = require('querystring');
+const handleBlogRouter = require('./src/router/blog');
+const handleUserRouter = require('./src/router/user');
+const {set, get} = require('./src/db/redis');
 
 const getCookieExp = ()=>{
     const t = new Date(Date.now() + (24 * 60 * 60 * 1000));
@@ -44,7 +44,7 @@ const getPostData = (req)=>{
     return promise;
 };
 
-const SESSION_CACHE = {};
+// const SESSION_CACHE = {};
 
 const serverHandler = (req, res)=> {
     //set header
@@ -67,12 +67,30 @@ const serverHandler = (req, res)=> {
         req.cookie[key.trim()] = val.trim();
     })
     //handle session
-    const userId = req.cookie.userId || `${((Math.floor(Math.random()*10000) + Date.now()) - Math.floor(Math.random()*1000000))}_${Math.floor(Math.random()*1000000)}`;
-    
-    if (!SESSION_CACHE[userId]){
-        SESSION_CACHE[userId] = {};
+    let userId = req.cookie.userId 
+    if (!userId){
+        userId = `${((Math.floor(Math.random()*10000) + Date.now()) - Math.floor(Math.random()*1000000))}_${Math.floor(Math.random()*1000000)}`;
+        //initializing session
+        set(userId, {});
     }
-    req.session = SESSION_CACHE[userId]
+    
+    req.sessionId = userId;
+    get(req.sessionId).then(
+        (sessionData) =>{
+            if (sessionData == null){
+                
+                set(req.sessionId, {})
+                req.session = {};
+            }else{
+
+                req.session = sessionData;
+            }
+        
+    
+    // if (!SESSION_CACHE[userId]){
+    //     SESSION_CACHE[userId] = {};
+    // }
+    // req.session = SESSION_CACHE[userId]
     //deal with post req
     
     getPostData(req).then((postData) =>{
@@ -105,7 +123,6 @@ const serverHandler = (req, res)=> {
             userResult.then(
                 (userData)=>{
                     if (userData){
-                        
                         if (setCookie){
                             res.setHeader(`Set-Cookie`, `userId=${userId}; path=/; httpOnly; expires=${getCookieExp()}`);
                         }
@@ -125,7 +142,8 @@ const serverHandler = (req, res)=> {
         res.write("404 NOT FOUND\n");
         res.end();
         return;
-    });
+    })
+});
     
         
         

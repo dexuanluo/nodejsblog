@@ -13,7 +13,7 @@ const getList = (author, keyword) => {
     return exec(sql);
 }
 const getDetail = (id) => {
-    const sql = `select * from blogs where id=${id}`
+    const sql = `select * from blogs where id=${id}`;
     return exec(sql);
 };
 const newBlog = (blogData= {}) => {
