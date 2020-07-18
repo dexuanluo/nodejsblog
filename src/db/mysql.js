@@ -22,5 +22,6 @@ exec = (sql) => {
 }
 console.log('mysql OK');
 module.exports = {
-    exec
+    exec,
+    escape:mysql.escape
 }

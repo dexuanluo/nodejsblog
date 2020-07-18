@@ -15,8 +15,20 @@ const createWriteStream = (fileName) => {
 };
 
 const accessWriteStream = createWriteStream('access.log');
+const errorWriteStream = createWriteStream('error.log');
+const eventWriteStream = createWriteStream('event.log');
 const access = (log) =>{
     writeLog(accessWriteStream, log);
 };
-
-module.exports = {access};
+const errorlog = (log) =>{
+    writeLog(errorWriteStream, log);
+};
+const eventlog = (log) =>{
+    writeLog(eventWriteStream, log);
+};
+module.exports = {
+    access,
+    errorlog,
+    eventlog
+    
+};

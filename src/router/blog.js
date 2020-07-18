@@ -4,7 +4,7 @@ const {
     newBlog,
     updateBlog,
     deleteBlog} = require('../controller/blog');
-
+const xss = require('xss');
 const {SuccessRes, ErrorRes} = require('../model/result');
 
 const loginCheck = (req)=>{
@@ -16,13 +16,13 @@ const loginCheck = (req)=>{
 }
 
 const handleBlogRouter = (req, res) =>{
-    const id = req.query.id;
+    const id = xss(req.query.id);
     
     
     if (req.method === 'GET' && req.path === '/api/blog/list'){
         
         const author = req.query.author || '';
-        const keyword = req.query.keyword || '';
+        const keyword = xss(req.query.keyword) || '';
         return getList(author, keyword).then((listData => {
             return new SuccessRes(listData);
         }));
