@@ -1,3 +1,6 @@
 /node_modules
 test.js
 /src/conf/dev_connection.js
+/logs/access.log
+/logs/error.log
+/logs/event.log

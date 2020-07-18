@@ -4,7 +4,9 @@ const {
     newBlog,
     updateBlog,
     deleteBlog} = require('../controller/blog');
+
 const {SuccessRes, ErrorRes} = require('../model/result');
+
 const loginCheck = (req)=>{
     if (!req.session.username){
         return Promise.resolve(
@@ -12,6 +14,7 @@ const loginCheck = (req)=>{
         )
     }
 }
+
 const handleBlogRouter = (req, res) =>{
     const id = req.query.id;
     
@@ -20,7 +23,7 @@ const handleBlogRouter = (req, res) =>{
         
         const author = req.query.author || '';
         const keyword = req.query.keyword || '';
-        return getList(author, keyword).then((listData =>{
+        return getList(author, keyword).then((listData => {
             return new SuccessRes(listData);
         }));
         
@@ -73,8 +76,8 @@ const handleBlogRouter = (req, res) =>{
                 }
             }
         );
-        
     }
+
     if (req.method ==='POST' && req.path === '/api/blog/del'){
         const loginResult = loginCheck(req);
         if (loginResult){
@@ -85,6 +88,7 @@ const handleBlogRouter = (req, res) =>{
                 new ErrorRes('no id specified')
             )
         }
+
         const author = req.session.username;
         const result = deleteBlog(id, author);
         return result.then(
@@ -96,7 +100,6 @@ const handleBlogRouter = (req, res) =>{
                 }
             }
         );
-        
     }
 }
 
